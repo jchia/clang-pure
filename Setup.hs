@@ -22,7 +22,7 @@ module Main (main) where
 import Control.Exception
 import Control.Monad
 import Distribution.PackageDescription
-import Distribution.Simple
+import Distribution.Simple                (confHook, defaultMainWithHooks, simpleUserHooks)
 import Distribution.Simple.LocalBuildInfo
 import Distribution.Simple.Setup
 import System.Environment
@@ -97,12 +97,6 @@ clangPureConfHook (d, bi) flags = do
         libBuildInfo = lbi
         { includeDirs = llvmIncludeDir : includeDirs lbi
         , extraLibDirs = llvmLibraryDir : extraLibDirs lbi
-        , cSources = -- define the generated c-sources here so that they don't get picked up by sdist
-#ifdef mingw32_HOST_OS
-            ["srcLanguageCClangInternalFFI.c"] -- work around a bug in inline-c (?)
-#else
-            ["src/Language/C/Clang/Internal/FFI.c"]
-#endif
         }
       }
     }
